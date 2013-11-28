@@ -1,4 +1,4 @@
-FSharp.Azure
+Stellar
 ============
 
 Windows Azure Management tools
