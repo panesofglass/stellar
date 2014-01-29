@@ -42,11 +42,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Common">
-      <HintPath>packages\Microsoft.WindowsAzure.Common.0.9.7-preview\lib\net45\Microsoft.WindowsAzure.Common.dll</HintPath>
+      <HintPath>packages\Microsoft.WindowsAzure.Common.0.9.9-preview\lib\net45\Microsoft.WindowsAzure.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Common.NetFramework">
-      <HintPath>packages\Microsoft.WindowsAzure.Common.0.9.7-preview\lib\net45\Microsoft.WindowsAzure.Common.NetFramework.dll</HintPath>
+      <HintPath>packages\Microsoft.WindowsAzure.Common.0.9.9-preview\lib\net45\Microsoft.WindowsAzure.Common.NetFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management">
@@ -54,7 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Compute">
-      <HintPath>packages\Microsoft.WindowsAzure.Management.Compute.0.9.8-preview\lib\net40\Microsoft.WindowsAzure.Management.Compute.dll</HintPath>
+      <HintPath>packages\Microsoft.WindowsAzure.Management.Compute.0.9.10-preview\lib\net40\Microsoft.WindowsAzure.Management.Compute.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Monitoring">
@@ -70,7 +70,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Sql">
-      <HintPath>packages\Microsoft.WindowsAzure.Management.Sql.0.9.3-preview\lib\net40\Microsoft.WindowsAzure.Management.Sql.dll</HintPath>
+      <HintPath>packages\Microsoft.WindowsAzure.Management.Sql.0.9.5-preview\lib\net40\Microsoft.WindowsAzure.Management.Sql.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Storage">
@@ -116,8 +116,9 @@
     <Compile Include="ProvidedTypes\Code\ProvidedTypes.fs" />
     <Compile Include="ProvidedTypes\Code\Debug.fs" />
     <None Include="packages.config" />
+    <Compile Include="CloudServices.fs" />
     <Compile Include="Subscriptions.fs" />
-    <Compile Include="ServiceManagementProvider.fs" />
+    <Compile Include="TypeProvider.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

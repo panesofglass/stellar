@@ -24,13 +24,14 @@ module internal Subscriptions =
 
     /// Generate a type for the subscription.
     let private createSubscriptionType id name encodedCert =
+        let credential = getCredential id encodedCert
+
         // Create the subscription type
         let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
-        [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true)
-          ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) ]
+        [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
+          ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
+          CloudServices.getWebSpaces credential :> MemberInfo ]
         |> subscriptionProperty.AddMembers
-
-        // TODO: Lazily create clients as child properties of each subscription.
 
         subscriptionProperty
 
