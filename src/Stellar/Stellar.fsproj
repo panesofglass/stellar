@@ -108,13 +108,15 @@
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Management.fs" />
     <Compile Include="ProvidedTypes\Signatures\ProvidedTypes.fsi" />
     <Compile Include="ProvidedTypes\Code\ProvidedTypes.fs" />
     <Compile Include="ProvidedTypes\Code\Debug.fs" />
     <None Include="packages.config" />
+    <Compile Include="Subscriptions.fs" />
     <Compile Include="ServiceManagementProvider.fs" />
   </ItemGroup>
   <PropertyGroup>
