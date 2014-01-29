@@ -11,13 +11,6 @@ open Microsoft.FSharp.Core.CompilerServices
 open Microsoft.WindowsAzure
 open ProviderImplementation.ProvidedTypes
 
-/// Internal representation of a Subscription, including its credentials
-type internal Subscription =
-    { Id: string
-      Name: string
-      ManagementCertificate: string
-      Credential: SubscriptionCloudCredentials }
-
 /// Provides types for managing subscriptions.
 module internal Subscriptions =
     
@@ -30,11 +23,11 @@ module internal Subscriptions =
         :> SubscriptionCloudCredentials
 
     /// Generate a type for the subscription.
-    let private createSubscriptionType subscription =
+    let private createSubscriptionType id name encodedCert =
         // Create the subscription type
-        let subscriptionProperty = ProvidedTypeDefinition(subscription.Name, Some typeof<obj>)
-        [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ subscription.Id @@>), IsStatic = true)
-          ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ subscription.ManagementCertificate @@>), IsStatic = true) ]
+        let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
+        [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true)
+          ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) ]
         |> subscriptionProperty.AddMembers
 
         // TODO: Lazily create clients as child properties of each subscription.
@@ -50,9 +43,4 @@ module internal Subscriptions =
             let id = node.Attribute(XName.Get "Id").Value
             let name = node.Attribute(XName.Get "Name").Value
             let encodedCert = node.Attribute(XName.Get "ManagementCertificate").Value
-            let subscription =
-                { Id = id
-                  Name = name
-                  ManagementCertificate = encodedCert
-                  Credential = getCredential id encodedCert }
-            yield createSubscriptionType subscription ]
+            yield createSubscriptionType id name encodedCert ]

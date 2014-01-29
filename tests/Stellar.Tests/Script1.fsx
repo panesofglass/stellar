@@ -2,4 +2,6 @@
 
 type A = Stellar.AzureManagementProvider<"""D:\azure.publishsettings""">
 
-A.``Pay-As-You-Go``
+// Print the Id and ManagementCertificate for a subscription.
+A.``Pay-As-You-Go``.Id |> printfn "%s"
+A.``Pay-As-You-Go``.ManagementCertificate |> printfn "%s"
