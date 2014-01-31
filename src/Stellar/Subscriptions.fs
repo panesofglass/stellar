@@ -42,7 +42,7 @@ module Subscriptions =
         let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
         [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
           ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
-          CloudServices.provideWebSpaces credential :> MemberInfo ]
+          WebSites.provideWebSpaces credential :> MemberInfo ]
         |> subscriptionProperty.AddMembers
 
         subscriptionProperty

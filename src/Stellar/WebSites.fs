@@ -10,8 +10,8 @@ open Microsoft.WindowsAzure.Management.WebSites
 open Microsoft.WindowsAzure.Management.WebSites.Models
 open ProviderImplementation.ProvidedTypes
 
-/// Provides types for managing cloud services.
-module CloudServices =
+/// Provides types for managing WAWS.
+module WebSites =
     let getWebSpaces credential =
         use client = new WebSiteManagementClient(credential)
         // TODO: Make this async?

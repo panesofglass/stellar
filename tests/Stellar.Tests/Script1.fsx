@@ -15,9 +15,10 @@
 type A = Stellar.AzureManagementProvider<"""D:\azure.publishsettings""">
 
 let credential = Stellar.Subscriptions.getCredential A.panesofglass.Id A.panesofglass.ManagementCertificate
-let webSpaces = Stellar.CloudServices.getWebSpaces credential
+let webSpaces = Stellar.WebSites.getWebSpaces credential
 let webSites =
     webSpaces
-    |> Seq.collect (fun webSpace -> Stellar.CloudServices.getWebSites(credential, webSpace.Name))
+    |> Seq.collect (fun webSpace -> Stellar.WebSites.getWebSites(credential, webSpace.Name))
+    |> Seq.toArray
+printfn "%i" webSites.Length
 for webSite in webSites do printfn "%s" webSite.Name
-

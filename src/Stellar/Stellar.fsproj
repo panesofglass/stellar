@@ -116,7 +116,7 @@
     <Compile Include="ProvidedTypes\Code\ProvidedTypes.fs" />
     <Compile Include="ProvidedTypes\Code\Debug.fs" />
     <None Include="packages.config" />
-    <Compile Include="CloudServices.fs" />
+    <Compile Include="WebSites.fs" />
     <Compile Include="Subscriptions.fs" />
     <Compile Include="TypeProvider.fs" />
   </ItemGroup>
