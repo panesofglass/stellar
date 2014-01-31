@@ -1,4 +1,5 @@
-﻿#r "../../src/Stellar/bin/Debug/Stellar.dll"
+﻿#I "../../src/Stellar/bin/Debug"
+#r "Stellar.dll"
 
 type A = Stellar.AzureManagementProvider<"""D:\azure.publishsettings""">
 
