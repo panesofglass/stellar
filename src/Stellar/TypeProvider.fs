@@ -21,7 +21,7 @@ type AzureManagementProvider(config: TypeProviderConfig) as this =
 
         // Create child members for the various management clients.
         let publishSettingsFile = args.[0] :?> string
-        typeProvider.AddMembers(Stellar.Subscriptions.load publishSettingsFile)
+        typeProvider.AddMembers(Stellar.Subscriptions.provideSubscriptions publishSettingsFile)
 
         typeProvider
 

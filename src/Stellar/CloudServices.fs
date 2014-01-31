@@ -1,12 +1,9 @@
 ﻿namespace Stellar
 
 open System
+open System.Diagnostics
 open System.IO
-open System.Linq
 open System.Reflection
-open System.Security.Cryptography.X509Certificates
-open System.Xml.Linq
-open System.Xml.XPath
 open Microsoft.FSharp.Core.CompilerServices
 open Microsoft.WindowsAzure
 open Microsoft.WindowsAzure.Management.WebSites
@@ -14,32 +11,38 @@ open Microsoft.WindowsAzure.Management.WebSites.Models
 open ProviderImplementation.ProvidedTypes
 
 /// Provides types for managing cloud services.
-module internal CloudServices =
+module CloudServices =
+    let getWebSpaces credential =
+        use client = new WebSiteManagementClient(credential)
+        // TODO: Make this async?
+        let response = client.WebSpaces.List()
+        response.WebSpaces
+
+    let getWebSites(credential, webSpaceName) =
+        use client = new WebSiteManagementClient(credential)
+        // TODO: Make this async?
+        let response = client.WebSpaces.ListWebSites(webSpaceName, WebSiteListParameters(PropertiesToInclude = [| "Name"; "Uri" |]))
+        response.WebSites
+
     let private createWebSiteType (site: WebSite) =
-        Console.WriteLine("Inside createWebSiteType")
         let name = site.Name
         let uri = site.Uri
         let webSiteProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
-        webSiteProperty.AddMembers(
-            [ ProvidedProperty("Name", typeof<string>, GetterCode = (fun args -> <@@ name @@>), IsStatic = true)
-              ProvidedProperty("Uri", typeof<string>, GetterCode = (fun args -> <@@ uri @@>), IsStatic = true) ]
-        )
+
+        [ ProvidedProperty("Name", typeof<string>, GetterCode = (fun args -> <@@ name @@>), IsStatic = true)
+          ProvidedProperty("Uri", typeof<Uri>, GetterCode = (fun args -> <@@ uri @@>), IsStatic = true) ]
+        |> webSiteProperty.AddMembers
+
         webSiteProperty
 
-    let private getWebSites(credential, name) =
-        Console.WriteLine("Inside getWebSites")
-        // TODO: Don't add this as a property if no web sites are in use.
+    let private provideWebSites(credential, name) =
         let webSitesProperty = ProvidedTypeDefinition("Web Sites", Some typeof<obj>)
+
         webSitesProperty.AddMembersDelayed(fun _ ->
-            Console.WriteLine("Creating WebSiteManagementClient")
-            use client = new WebSiteManagementClient(credential)
-            Console.WriteLine("Created WebSiteManagementClient")
-            // TODO: Make this async?
-            client.WebSpaces.ListWebSites(name, WebSiteListParameters(PropertiesToInclude = [| "Name"; "Uri" |]))
+            getWebSites(credential, name)
             |> Seq.map createWebSiteType
-            |> Seq.toList
-        )
-        Console.WriteLine("Returning property")
+            |> Seq.toList )
+
         webSitesProperty
 
     let private createWebSpaceType (credential, webSpace: WebSpacesListResponse.WebSpace) =
@@ -50,24 +53,22 @@ module internal CloudServices =
         let geoRegion = webSpace.GeoRegion
         let currentWorkerSize = if webSpace.CurrentWorkerSize.HasValue then Some (webSpace.CurrentWorkerSize.Value.ToString()) else None
         let currentNumberOfWorkers = if webSpace.CurrentNumberOfWorkers.HasValue then Some webSpace.CurrentNumberOfWorkers.Value else None
-        webSpaceProperty.AddMembers(
-            [ ProvidedProperty("Name", typeof<string>, GetterCode = (fun args -> <@@ name @@>), IsStatic = true) :> MemberInfo
-              ProvidedProperty("Geographic location", typeof<string>, GetterCode = (fun args -> <@@ geoLocation @@>), IsStatic = true) :> MemberInfo
-              ProvidedProperty("Geographic region", typeof<string>, GetterCode = (fun args -> <@@ geoRegion @@>), IsStatic = true) :> MemberInfo
-              ProvidedProperty("Current worker size", typeof<string option>, GetterCode = (fun args -> <@@ currentWorkerSize @@>), IsStatic = true) :> MemberInfo
-              ProvidedProperty("Current number of workers", typeof<int option>, GetterCode = (fun args -> <@@ currentNumberOfWorkers @@>), IsStatic = true) :> MemberInfo
-              getWebSites(credential, name) :> MemberInfo ]
-        )
+        [ ProvidedProperty("Name", typeof<string>, GetterCode = (fun args -> <@@ name @@>), IsStatic = true) :> MemberInfo
+          ProvidedProperty("Geographic location", typeof<string>, GetterCode = (fun args -> <@@ geoLocation @@>), IsStatic = true) :> MemberInfo
+          ProvidedProperty("Geographic region", typeof<string>, GetterCode = (fun args -> <@@ geoRegion @@>), IsStatic = true) :> MemberInfo
+          ProvidedProperty("Current worker size", typeof<string option>, GetterCode = (fun args -> <@@ currentWorkerSize @@>), IsStatic = true) :> MemberInfo
+          ProvidedProperty("Current number of workers", typeof<int option>, GetterCode = (fun args -> <@@ currentNumberOfWorkers @@>), IsStatic = true) :> MemberInfo
+          provideWebSites(credential, name) :> MemberInfo ]
+        |> webSpaceProperty.AddMembers
+
         webSpaceProperty
 
-    let getWebSpaces credential =
-        // TODO: Don't add this as a property if no web spaces are in use.
+    let internal provideWebSpaces credential =
         let webSpacesProperty = ProvidedTypeDefinition("Web Spaces", Some typeof<obj>)
+
         webSpacesProperty.AddMembersDelayed(fun _ ->
-            use client = new WebSiteManagementClient(credential)
-            // TODO: Make this async?
-            client.WebSpaces.List()
+            getWebSpaces credential
             |> Seq.map (fun webSpace -> createWebSpaceType(credential, webSpace))
-            |> Seq.toList
-        )
+            |> Seq.toList )
+
         webSpacesProperty
