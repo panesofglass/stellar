@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Stellar.Tests", "Stellar.Tests.fsproj", "{095A1BAF-CD97-4E88-BA16-201F48CC7205}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Stellar", "src\Stellar\Stellar.fsproj", "{6300B7F1-583E-43B0-A816-2AFC824143EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{095A1BAF-CD97-4E88-BA16-201F48CC7205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{095A1BAF-CD97-4E88-BA16-201F48CC7205}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{095A1BAF-CD97-4E88-BA16-201F48CC7205}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{095A1BAF-CD97-4E88-BA16-201F48CC7205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6300B7F1-583E-43B0-A816-2AFC824143EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6300B7F1-583E-43B0-A816-2AFC824143EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6300B7F1-583E-43B0-A816-2AFC824143EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6300B7F1-583E-43B0-A816-2AFC824143EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
