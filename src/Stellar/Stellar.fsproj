@@ -54,7 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Compute">
-      <HintPath>packages\Microsoft.WindowsAzure.Management.Compute.0.9.10-preview\lib\net40\Microsoft.WindowsAzure.Management.Compute.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.WindowsAzure.Management.Compute.0.9.11-preview\lib\net40\Microsoft.WindowsAzure.Management.Compute.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.Monitoring">
@@ -82,7 +82,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Management.WebSites">
-      <HintPath>packages\Microsoft.WindowsAzure.Management.WebSites.0.9.3-preview\lib\net40\Microsoft.WindowsAzure.Management.WebSites.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.WindowsAzure.Management.WebSites.0.9.10-preview\lib\net40\Microsoft.WindowsAzure.Management.WebSites.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
@@ -116,6 +116,7 @@
     <Compile Include="ProvidedTypes\Code\ProvidedTypes.fs" />
     <Compile Include="ProvidedTypes\Code\Debug.fs" />
     <None Include="packages.config" />
+    <Compile Include="Util.fs" />
     <Compile Include="WebSites.fs" />
     <Compile Include="Subscriptions.fs" />
     <Compile Include="TypeProvider.fs" />

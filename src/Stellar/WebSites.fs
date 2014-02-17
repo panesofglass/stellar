@@ -15,14 +15,12 @@ module WebSites =
     let getWebSpaces credential =
         use client = new WebSiteManagementClient(credential)
         // TODO: Make this async?
-        let response = client.WebSpaces.List()
-        response.WebSpaces
+        client.WebSpaces.List()
 
     let getWebSites(credential, webSpaceName) =
         use client = new WebSiteManagementClient(credential)
         // TODO: Make this async?
-        let response = client.WebSpaces.ListWebSites(webSpaceName, WebSiteListParameters(PropertiesToInclude = [| "Name"; "Uri" |]))
-        response.WebSites
+        client.WebSpaces.ListWebSites(webSpaceName, WebSiteListParameters())
 
     let private createWebSiteType (site: WebSite) =
         let name = site.Name
@@ -39,7 +37,8 @@ module WebSites =
         let webSitesProperty = ProvidedTypeDefinition("Web Sites", Some typeof<obj>)
 
         webSitesProperty.AddMembersDelayed(fun _ ->
-            getWebSites(credential, name)
+            let response = getWebSites(credential, name)
+            response.WebSites
             |> Seq.map createWebSiteType
             |> Seq.toList )
 
@@ -67,7 +66,8 @@ module WebSites =
         let webSpacesProperty = ProvidedTypeDefinition("Web Spaces", Some typeof<obj>)
 
         webSpacesProperty.AddMembersDelayed(fun _ ->
-            getWebSpaces credential
+            let response = getWebSpaces credential
+            response.WebSpaces
             |> Seq.map (fun webSpace -> createWebSpaceType(credential, webSpace))
             |> Seq.toList )
 
