@@ -1,4 +1,5 @@
-﻿namespace Stellar
+﻿/// Provides types for managing subscriptions.
+module Stellar.Subscriptions
 
 open System
 open System.IO
@@ -10,37 +11,35 @@ open System.Xml.XPath
 open Microsoft.FSharp.Core.CompilerServices
 open ProviderImplementation.ProvidedTypes
 
-/// Provides types for managing subscriptions.
-module Subscriptions =
-    type Subscription = Subscription of id: string * name: string * base64EncodedCertificate: string
-    
-    // Download your Azure publishsettings file using the Windows PowerShell Cmdlets: Get-AzurePublishSettingsFile
-    // Use your subscriptionId and base64EncodedCert below.
+type Subscription = Subscription of id: string * name: string * base64EncodedCertificate: string
 
-    /// Read the publishsettings file to obtain available subscriptions.
-    let load publishSettingsFile =
-        use file = File.OpenRead(publishSettingsFile)
-        let document = XDocument.Load(file)
-        let nodes = document.XPathSelectElements("/PublishData/PublishProfile/Subscription")
-        [ for node in nodes do
-            let id = node.Attribute(XName.Get "Id").Value
-            let name = node.Attribute(XName.Get "Name").Value
-            let encodedCert = node.Attribute(XName.Get "ManagementCertificate").Value
-            yield Subscription(id, name, encodedCert) ]
+// Download your Azure publishsettings file using the Windows PowerShell Cmdlets: Get-AzurePublishSettingsFile
+// Use your subscriptionId and base64EncodedCert below.
 
-    /// Generate a type for the subscription.
-    let private createSubscriptionType (Subscription(id, name, encodedCert)) =
-        let certificate = X509Certificate2(Convert.FromBase64String(encodedCert))
+/// Read the publishsettings file to obtain available subscriptions.
+let load publishSettingsFile =
+    use file = File.OpenRead(publishSettingsFile)
+    let document = XDocument.Load(file)
+    let nodes = document.XPathSelectElements("/PublishData/PublishProfile/Subscription")
+    [ for node in nodes do
+        let id = node.Attribute(XName.Get "Id").Value
+        let name = node.Attribute(XName.Get "Name").Value
+        let encodedCert = node.Attribute(XName.Get "ManagementCertificate").Value
+        yield Subscription(id, name, encodedCert) ]
 
-        // Create the subscription type
-        let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
-        [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
-          ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
-          WebSites.provideWebSpaces(id, certificate) :> MemberInfo ]
-        |> subscriptionProperty.AddMembers
+/// Generate a type for the subscription.
+let private createSubscriptionType (Subscription(id, name, encodedCert)) =
+    let certificate = X509Certificate2(Convert.FromBase64String(encodedCert))
 
-        subscriptionProperty
+    // Create the subscription type
+    let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
+    [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
+      ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
+      WebSites.provideWebSpaces(id, certificate) :> MemberInfo ]
+    |> subscriptionProperty.AddMembers
 
-    let internal provideSubscriptions publishSettingsFile =
-        load publishSettingsFile
-        |> List.map createSubscriptionType
+    subscriptionProperty
+
+let internal provideSubscriptions publishSettingsFile =
+    load publishSettingsFile
+    |> List.map createSubscriptionType
