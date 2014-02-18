@@ -1,7 +1,10 @@
 ﻿module internal Stellar.Http
 
 open System
+open System.IO
 open System.Net
+open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 
 type Result<'T> =
     | Success of result: 'T
@@ -27,5 +30,13 @@ let inline makeRequest httpMethod (uri: string) certificate =
     request.ClientCertificates.Add(certificate) |> ignore
     request
 
-let createGetRequest (uri: string) certificate =
-    makeRequest GET uri certificate
+let getJsonRequest (uri: string) certificate =
+    let request = makeRequest GET uri certificate
+    use response = request.GetResponse() :?> HttpWebResponse
+    if response.StatusCode = HttpStatusCode.OK then
+        use stream = response.GetResponseStream()
+        use reader = new StreamReader(stream)
+        use jsonReader = new JsonTextReader(reader)
+        let json = JToken.ReadFrom(jsonReader)
+        [ for item in json do yield item :?> JObject ]
+    else []
