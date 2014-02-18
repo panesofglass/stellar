@@ -8,7 +8,6 @@ open System.Security.Cryptography.X509Certificates
 open System.Xml.Linq
 open System.Xml.XPath
 open Microsoft.FSharp.Core.CompilerServices
-open Microsoft.WindowsAzure
 open ProviderImplementation.ProvidedTypes
 
 /// Provides types for managing subscriptions.
@@ -17,11 +16,6 @@ module Subscriptions =
     
     // Download your Azure publishsettings file using the Windows PowerShell Cmdlets: Get-AzurePublishSettingsFile
     // Use your subscriptionId and base64EncodedCert below.
-
-    /// Convert the subscription Id and Base 64 encoded certificate into an instance of SubscriptionCloudCredentials.
-    let getCredential id encodedCert =
-        CertificateCloudCredentials(id, X509Certificate2(Convert.FromBase64String(encodedCert)))
-        :> SubscriptionCloudCredentials
 
     /// Read the publishsettings file to obtain available subscriptions.
     let load publishSettingsFile =
@@ -36,13 +30,13 @@ module Subscriptions =
 
     /// Generate a type for the subscription.
     let private createSubscriptionType (Subscription(id, name, encodedCert)) =
-        let credential = getCredential id encodedCert
+        let certificate = X509Certificate2(Convert.FromBase64String(encodedCert))
 
         // Create the subscription type
         let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
         [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
           ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
-          WebSites.provideWebSpaces credential :> MemberInfo ]
+          WebSites.provideWebSpaces(id, certificate) :> MemberInfo ]
         |> subscriptionProperty.AddMembers
 
         subscriptionProperty
