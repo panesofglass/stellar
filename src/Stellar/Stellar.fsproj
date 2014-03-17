@@ -58,6 +58,7 @@
     <None Include="packages.config" />
     <Compile Include="Http.fs" />
     <Compile Include="Json.fs" />
+    <Compile Include="CloudServices.fs" />
     <Compile Include="WebSites.fs" />
     <Compile Include="Subscriptions.fs" />
     <Compile Include="TypeProvider.fs" />

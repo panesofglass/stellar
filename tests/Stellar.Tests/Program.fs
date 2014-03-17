@@ -1,4 +1,4 @@
-﻿type A = Stellar.AzureManagementProvider<"""M:\azure.publishsettings""">
+﻿type A = Stellar.AzureManagementProvider<"""D:\azure.publishsettings""">
 
 [<EntryPoint>]
 let main argv = 

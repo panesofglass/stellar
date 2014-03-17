@@ -33,9 +33,12 @@ let private createSubscriptionType (Subscription(id, name, encodedCert)) =
 
     // Create the subscription type
     let subscriptionProperty = ProvidedTypeDefinition(name, Some typeof<obj>)
-    [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true) :> MemberInfo
-      ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) :> MemberInfo
-      WebSites.provideWebSpaces(id, certificate) :> MemberInfo ]
+    [ ProvidedProperty("Id", typeof<string>, GetterCode = (fun args -> <@@ id @@>), IsStatic = true)
+      ProvidedProperty("ManagementCertificate", typeof<string>, GetterCode = (fun args -> <@@ encodedCert @@>), IsStatic = true) ]
+    |> subscriptionProperty.AddMembers
+      
+    [ CloudServices.provideCloudServices(id, certificate)
+      WebSites.provideWebSpaces(id, certificate) ]
     |> subscriptionProperty.AddMembers
 
     subscriptionProperty

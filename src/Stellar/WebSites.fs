@@ -15,11 +15,11 @@ open Stellar.Json
 
 let getWebSpaces(id, certificate) =
     let uri = sprintf "https://management.core.windows.net/%s/services/WebSpaces" id
-    Http.getJsonRequest uri certificate
+    Http.getJsonResponse uri certificate
 
 let getWebSites(id, certificate, webSpaceName) =
     let uri = sprintf "https://management.core.windows.net/%s/services/WebSpaces/%s/sites/" id webSpaceName
-    Http.getJsonRequest uri certificate
+    Http.getJsonResponse uri certificate
 
 let private createWebSiteType (site: JObject) =
     let name = site.["Name"] |> string
