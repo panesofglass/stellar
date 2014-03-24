@@ -33,7 +33,7 @@ let inline makeRequest httpMethod (uri: string) certificate =
 let getJsonResponse (uri: string) certificate =
     let request = makeRequest GET uri certificate
     request.Accept <- ``application/json``
-    request.ContentType<- ``application/json``
+    request.ContentType <- ``application/json``
     use response = request.GetResponse() :?> HttpWebResponse
     if response.StatusCode = HttpStatusCode.OK then
         use stream = response.GetResponseStream()
@@ -46,9 +46,9 @@ let getJsonResponse (uri: string) certificate =
 let getXmlResponse (uri: string) certificate =
     let request = makeRequest GET uri certificate
     request.Accept <- ``application/xml``
-    request.ContentType<- ``application/xml``
+    request.ContentType <- ``application/xml``
     use response = request.GetResponse() :?> HttpWebResponse
     if response.StatusCode = HttpStatusCode.OK then
         use stream = response.GetResponseStream()
-        XDocument.Load(stream).Elements() |> Seq.toList
+        XDocument.Load(stream).Root.Elements() |> Seq.toList
     else []
