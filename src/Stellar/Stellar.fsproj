@@ -54,13 +54,13 @@
   <ItemGroup>
     <Compile Include="ProvidedTypes\Signatures\ProvidedTypes.fsi" />
     <Compile Include="ProvidedTypes\Code\ProvidedTypes.fs" />
+    <Compile Include="ProvidedTypes\Code\AssemblyReplacer.fs" />
+    <Compile Include="ProvidedTypes\Code\AssemblyResolver.fs" />
     <Compile Include="ProvidedTypes\Code\Debug.fs" />
     <None Include="packages.config" />
     <Compile Include="Http.fs" />
     <Compile Include="Json.fs" />
-    <Compile Include="CloudServices.fs" />
-    <Compile Include="WebSites.fs" />
-    <Compile Include="Subscriptions.fs" />
+    <Compile Include="Runtime.fs" />
     <Compile Include="TypeProvider.fs" />
   </ItemGroup>
   <PropertyGroup>

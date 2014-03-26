@@ -30,25 +30,29 @@ let inline makeRequest httpMethod (uri: string) certificate =
     request.ClientCertificates.Add(certificate) |> ignore
     request
 
-let getJsonResponse (uri: string) certificate =
+let getJsonResponse (uri: string) certificate = async {
     let request = makeRequest GET uri certificate
     request.Accept <- ``application/json``
     request.ContentType <- ``application/json``
-    use response = request.GetResponse() :?> HttpWebResponse
-    if response.StatusCode = HttpStatusCode.OK then
+    use! response = request.AsyncGetResponse()
+    let httpResponse = response :?> HttpWebResponse
+    if httpResponse.StatusCode = HttpStatusCode.OK then
         use stream = response.GetResponseStream()
         use reader = new StreamReader(stream)
         use jsonReader = new JsonTextReader(reader)
         let json = JToken.ReadFrom(jsonReader)
-        [ for item in json do yield item :?> JObject ]
-    else []
+        return [ for item in json do yield item :?> JObject ]
+    else return []
+}
 
-let getXmlResponse (uri: string) certificate =
+let getXmlResponse (uri: string) certificate = async {
     let request = makeRequest GET uri certificate
     request.Accept <- ``application/xml``
     request.ContentType <- ``application/xml``
-    use response = request.GetResponse() :?> HttpWebResponse
-    if response.StatusCode = HttpStatusCode.OK then
+    use! response = request.AsyncGetResponse()
+    let httpResponse = response :?> HttpWebResponse
+    if httpResponse.StatusCode = HttpStatusCode.OK then
         use stream = response.GetResponseStream()
-        XDocument.Load(stream).Root.Elements() |> Seq.toList
-    else []
+        return Some <| XDocument.Load(stream).Root
+    else return None
+}
