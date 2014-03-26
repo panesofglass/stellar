@@ -6,6 +6,7 @@ open System.Collections
 open System.Collections.Generic
 open System.Diagnostics
 open System.IO
+open System.Linq
 open System.Net
 open System.Reflection
 open System.Security.Cryptography.X509Certificates
@@ -23,6 +24,23 @@ let private Name = XName.Get("Name", AzureNamespace)
 
 let inline internal (!!) name = XName.Get(name, AzureNamespace)
 
+type HostedServiceDeployment internal (element: XElement) =
+    let name = element.Element(!!"Name").Value
+    let slot = element.Element(!!"DeploymentSlot").Value
+    let privateId = element.Element(!!"PrivateId").Value
+    let status = element.Element(!!"Status").Value
+    let label = element.Element(!!"Label").Value
+    let url = Uri(element.Element(!!"Url").Value)
+    let configuration = Text.Encoding.UTF8.GetString(Convert.FromBase64String(element.Element(!!"Configuration").Value))
+
+    member x.Name = name
+    member x.DeploymentSlot = slot
+    member x.PrivateId = privateId
+    member x.Status = status
+    member x.Label = label
+    member x.Url = url
+    member x.Configuration = configuration
+
 type HostedServiceProperties internal (element: XElement) =
     let affinityGroup = element.Element(!!"AffinityGroup").Value
     let location = element.Element(!!"Location").Value
@@ -35,8 +53,7 @@ type HostedServiceProperties internal (element: XElement) =
     let extendedProperties =
         let Name = !!"Name"
         let Value = !!"Value"
-        [ for el in element.Element(!!"ExtendedProperties").Elements() do
-            yield el.Element(Name).Value, el.Element(Value).Value ]
+        dict [ for el in element.Element(!!"ExtendedProperties").Elements() -> el.Element(Name).Value, el.Element(Value).Value ]
 
     member x.Description = description
     member x.AffinityGroup = affinityGroup
@@ -51,10 +68,15 @@ type HostedService internal (element: XElement) =
     let url = Uri(element.Element(!!"Url").Value)
     let serviceName = element.Element(!!"ServiceName").Value
     let hostedServiceProperties = HostedServiceProperties(element.Element(!!"HostedServiceProperties"))
+    let deployments =
+        [ for el in element.Elements(!!"Deployments") do
+          for d in el.Elements() do
+              yield HostedServiceDeployment(d) ]
 
     member x.Url = url
     member x.ServiceName = serviceName
     member x.HostedServiceProperties = hostedServiceProperties
+    member x.Deployments = deployments
 
 type SubscriptionConnection(id, certificate) =
     let cloudServicesUrl = sprintf "https://management.core.windows.net/%s/services/hostedservices" id
